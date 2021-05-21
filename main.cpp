@@ -3,9 +3,26 @@
 #include "FPS.h"
 
 
+struct CHARACTOR 
+{
+	int handle = -1;
+	char path[255];
+	int x;
+	int y;
+	int width;
+	int height;
+	int speed = 1;
+
+	RECT coll;
+
+	BOOL IsDraw = FALSE;
+};
+
 GAME_SCENE GameScene;
 GAME_SCENE OldGameScene;
 GAME_SCENE NextGameScene;
+
+CHARACTOR player;
 	
 BOOL IsFadeOut = FALSE;
 BOOL IsFadeIn  = FALSE;
@@ -61,11 +78,26 @@ int WINAPI WinMain(
 	if (DxLib_Init() == -1){ return -1 ;}
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	int x = GAME_WIDTH / 2;
-	int y = GAME_HEIGHT / 2;
-	int radius = 50;
-
 	GameScene = GAME_SCENE_TITLE;
+
+	strcpyDx(player.path, ".\\IMAGE\\player.png");
+	player.handle = LoadGraph(player.path);
+
+	if (player.handle == -1)
+	{
+		MessageBox(GetMainWindowHandle(), player.path, "画像読み込みエラー", MB_OK);
+
+		DxLib_End();
+
+		return -1;
+	}
+
+	GetGraphSize(player.handle, &player.width, &player.height);
+
+	player.x = GAME_WIDTH / 2 - player.width / 2;
+	player.y = GAME_HEIGHT / 2 - player.height / 2;
+	player.speed = 5;
+	player.IsDraw = TRUE;
 
 	//∞ループ
 	while (1)
@@ -112,26 +144,6 @@ int WINAPI WinMain(
 			}
 		}
 
-		if (KeyDown(KEY_INPUT_W) == TRUE)
-		{
-			y--;
-		}
-		else if (KeyDown(KEY_INPUT_S) == TRUE)
-		{
-			y++;
-		}
-
-		if (KeyDown(KEY_INPUT_A) == TRUE)
-		{
-			x--;
-		}
-		else if (KeyDown(KEY_INPUT_D) == TRUE)
-		{
-			x++;
-		}
-
-		DrawCircle(x, y ,radius, GetColor(255, 255, 0), TRUE);
-
 		FPSDraw();
 
 		FPSWait();
@@ -139,6 +151,8 @@ int WINAPI WinMain(
 		ScreenFlip(); 
 	}
 	
+	DeleteGraph(player.handle);
+
 	DxLib_End();
 
 	return 0;	
@@ -193,6 +207,11 @@ VOID PlayProc(VOID)
 
 VOID PlayDraw(VOID)
 {
+	if (player.IsDraw == TRUE)
+	{
+		DrawGraph(player.x, player.y, player.handle, TRUE);
+	}
+
 	DrawString(0, 0, "プレイ画面", GetColor(0, 0, 0));
 	return;
 }
