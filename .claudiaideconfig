@@ -1,0 +1,21 @@
+﻿{
+  "BackgroundImageAbsolutePath": "C:\\Users\\g19019\\Pictures\\Camera Roll\\カメラアップロード\\2018-08-08 08.06.29.jpg",
+  "BackgroundImagesDirectoryAbsolutePath": "C:\\USERS\\G19019\\APPDATA\\LOCAL\\MICROSOFT\\VISUALSTUDIO\\16.0_3149AFCB\\EXTENSIONS\\MVFIJAJV.B4K\\Images",
+  "ExpandToIDE": false,
+  "Extensions": ".png, .jpg, .gif, .bmp",
+  "ImageBackgroundType": 0,
+  "ImageFadeAnimationInterval": "PT0S",
+  "ImageStretch": 0,
+  "LoopSlideshow": true,
+  "MaxHeight": 0,
+  "MaxWidth": 0,
+  "Opacity": 0.35,
+  "PositionHorizon": 1,
+  "PositionVertical": 1,
+  "ShuffleSlideshow": false,
+  "SoftEdgeX": 0,
+  "SoftEdgeY": 0,
+  "UpdateImageInterval": "PT1M",
+  "ViewBoxPointX": 0,
+  "ViewBoxPointY": 0
+}
