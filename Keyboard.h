@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DxLib.h"
+#include "game.h"
 
 #define KEY_KIND_MAX 256
 

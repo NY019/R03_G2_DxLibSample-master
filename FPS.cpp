@@ -1,5 +1,4 @@
 
-#include "DxLib.h"
 #include "FPS.h"
 
 FPS fps;
@@ -37,8 +36,10 @@ VOID FPSUpdate(VOID)
 
 VOID FPSDraw(VOID)
 {
-	DrawFormatString(0, 20, GetColor(0, 0, 0), "FPS: %.1f", fps.DrawValue);
-
+	if (GAME_DEBUG == TRUE)
+	{
+		DrawFormatString(0, GAME_HEIGHT -20, GetColor(0, 0, 0), "FPS: %.1f", fps.DrawValue);
+	}
 	return;
 }
 

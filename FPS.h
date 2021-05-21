@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "DxLib.h"
+#include "game.h"
 
 #define GAME_FPS 60
 #define GAME_FPS_MAX 240
