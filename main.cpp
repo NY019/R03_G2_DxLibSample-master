@@ -23,6 +23,8 @@ GAME_SCENE OldGameScene;
 GAME_SCENE NextGameScene;
 
 CHARACTOR player;
+
+CHARACTOR goal;
 	
 BOOL IsFadeOut = FALSE;
 BOOL IsFadeIn  = FALSE;
@@ -56,6 +58,10 @@ VOID ChangeDraw(VOID);
 
 VOID ChangeScene(GAME_SCENE scene);
 
+VOID CollUpdatePlayer(CHARACTOR* chara);
+VOID CollUpdate(CHARACTOR* chara);
+
+
 int WINAPI WinMain(
 	HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -80,7 +86,7 @@ int WINAPI WinMain(
 
 	GameScene = GAME_SCENE_TITLE;
 
-	strcpyDx(player.path, ".\\IMAGE\\player.png");
+	strcpyDx(player.path, ".\\IMAGE\\Player.png");
 	player.handle = LoadGraph(player.path);
 
 	if (player.handle == -1)
@@ -96,8 +102,27 @@ int WINAPI WinMain(
 
 	player.x = GAME_WIDTH / 2 - player.width / 2;
 	player.y = GAME_HEIGHT / 2 - player.height / 2;
-	player.speed = 5;
+	player.speed = 500;
 	player.IsDraw = TRUE;
+
+	strcpyDx(goal.path, ".\\IMAGE\\Goal.png");
+	goal.handle = LoadGraph(goal.path);
+
+	if (goal.handle == -1)
+	{
+		MessageBox(GetMainWindowHandle(), goal.path, "画像読み込みエラー", MB_OK);
+
+		DxLib_End();
+
+		return -1;
+	}
+
+	GetGraphSize(goal.handle, &goal.width, & goal.height);
+
+	goal.x = GAME_WIDTH  - goal.width;
+	goal.y = 0;
+	goal.speed = 500;
+	goal.IsDraw = TRUE;
 
 	//∞ループ
 	while (1)
@@ -152,6 +177,8 @@ int WINAPI WinMain(
 	}
 	
 	DeleteGraph(player.handle);
+	DeleteGraph(goal.handle);
+
 
 	DxLib_End();
 
@@ -163,12 +190,15 @@ VOID ChangeScene(GAME_SCENE scene)
 	GameScene = scene;
 	IsFadeIn = FALSE;
 	IsFadeOut = TRUE;
+
+	return;
 }
 
 VOID Title(VOID)
 {
 	TitleProc();
 	TitleDraw();
+
 	return;
 }
 
@@ -202,6 +232,30 @@ VOID PlayProc(VOID)
 	{
 		ChangeScene(GAME_SCENE_END);
 	}
+
+	if (KeyDown(KEY_INPUT_DOWN) == TRUE)
+	{
+		player.y += player.speed  * fps.DeltaTime;
+	}
+
+	if (KeyDown(KEY_INPUT_UP) == TRUE)
+	{
+		player.y -= player.speed * fps.DeltaTime;
+	}
+
+	if (KeyDown(KEY_INPUT_RIGHT) == TRUE)
+	{
+		player.x += player.speed * fps.DeltaTime;
+	}
+
+	if (KeyDown(KEY_INPUT_LEFT) == TRUE)
+	{
+		player.x -= player.speed * fps.DeltaTime;
+	}
+
+
+	CollUpdatePlayer(&player);
+
 	return;
 }
 
@@ -210,6 +264,21 @@ VOID PlayDraw(VOID)
 	if (player.IsDraw == TRUE)
 	{
 		DrawGraph(player.x, player.y, player.handle, TRUE);
+
+		if (GAME_DEBUG == TRUE)
+		{
+			DrawBox(player.coll.left, player.coll.top, player.coll.right, player.coll.bottom, GetColor(255, 0, 0), FALSE);
+		}
+	}
+
+	if (goal.IsDraw == TRUE)
+	{
+		DrawGraph(goal.x, goal.y, goal.handle, TRUE);
+
+		if (GAME_DEBUG == TRUE)
+		{
+			DrawBox(goal.coll.left, goal.coll.top, goal.coll.right, goal.coll.bottom, GetColor(255, 0, 0), FALSE);
+		}
 	}
 
 	DrawString(0, 0, "プレイ画面", GetColor(0, 0, 0));
@@ -250,7 +319,7 @@ VOID ChangeProc(VOID)
 	{
 		if (fadeInCnt > fadeInCntMax)
 		{
-			fadeInCnt++;
+			fadeInCnt--;
 		}
 		else
 		{
@@ -312,4 +381,26 @@ VOID ChangeDraw(VOID)
 
 	DrawString(0, 0, "切り替え画面", GetColor(0, 0, 0));
 	return;
+}
+
+VOID CollUpdatePlayer(CHARACTOR* chara)
+{
+	chara->coll.left = chara->x;
+	chara->coll.top = chara->y;
+	chara->coll.right = chara->x + chara->width-50;
+	chara->coll.bottom = chara->y + chara->height-50;
+
+	return;
+
+}
+
+VOID CollUpdate(CHARACTOR* chara)
+{
+	chara->coll.left = chara->x;
+	chara->coll.top = chara->y;
+	chara->coll.right = chara->x + chara->width ;
+	chara->coll.bottom = chara->y + chara->height ;
+
+	return;
+
 }

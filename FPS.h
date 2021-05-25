@@ -24,6 +24,8 @@ struct FPS
 
 };
 
+extern FPS fps;
+
 VOID FPSUpdate(VOID);
 VOID FPSDraw(VOID);
 VOID FPSWait(VOID);
