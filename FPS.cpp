@@ -51,17 +51,17 @@ VOID FPSWait(VOID)
 
 	waitTime /= 1000.0f;
 
-	if (waitTime > 0)
+	/*if (waitTime > 0)
 	{
 		WaitTimer(waitTime);
-	}
+	}*/
 	if (GetWaitVSyncFlag() == FALSE)
 	{
 		if (fps.Value < GAME_FPS_MAX)
 		{
 			if (waitTime > 0 && waitTime <= 1000.0f / fps.Value)
 			{
-				//fps.Count++;
+				fps.Count++;
 				fps.Value++;
 			}
 			else

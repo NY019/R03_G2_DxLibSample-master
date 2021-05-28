@@ -18,9 +18,24 @@ struct CHARACTOR
 	BOOL IsDraw = FALSE;
 };
 
+struct MOVIE
+{
+	int handle = -1;
+	char path[255];
+
+	int x;
+	int y;
+	int width;
+	int height;
+
+	int Volume = 255;
+};
+
 GAME_SCENE GameScene;
 GAME_SCENE OldGameScene;
 GAME_SCENE NextGameScene;
+
+MOVIE playmovie;
 
 CHARACTOR player;
 
@@ -60,7 +75,7 @@ VOID ChangeScene(GAME_SCENE scene);
 
 VOID CollUpdatePlayer(CHARACTOR* chara);
 VOID CollUpdate(CHARACTOR* chara);
-
+BOOL OnCollRect(RECT a, RECT b);
 
 int WINAPI WinMain(
 	HINSTANCE hInstance,
@@ -86,6 +101,22 @@ int WINAPI WinMain(
 
 	GameScene = GAME_SCENE_TITLE;
 
+	strcpyDx(playmovie.path, ".\\MOVIE\\MOVIE.mp4");
+	playmovie.handle = LoadGraph(playmovie.path);
+
+	if (playmovie.handle == -1)
+	{
+		MessageBox(GetMainWindowHandle(), playmovie.path, "画像読み込みエラー", MB_OK);
+
+		DxLib_End();
+
+		return -1;
+	}
+
+	GetGraphSize(playmovie.handle, &playmovie.width, &playmovie.height);
+
+	playmovie.Volume = 255;
+
 	strcpyDx(player.path, ".\\IMAGE\\Player.png");
 	player.handle = LoadGraph(player.path);
 
@@ -102,8 +133,10 @@ int WINAPI WinMain(
 
 	player.x = GAME_WIDTH / 2 - player.width / 2;
 	player.y = GAME_HEIGHT / 2 - player.height / 2;
-	player.speed = 500;
+	player.speed = 5;
 	player.IsDraw = TRUE;
+
+	CollUpdate(&player);
 
 	strcpyDx(goal.path, ".\\IMAGE\\Goal.png");
 	goal.handle = LoadGraph(goal.path);
@@ -123,6 +156,8 @@ int WINAPI WinMain(
 	goal.y = 0;
 	goal.speed = 500;
 	goal.IsDraw = TRUE;
+
+	CollUpdate(&goal);
 
 	//∞ループ
 	while (1)
@@ -175,7 +210,8 @@ int WINAPI WinMain(
 
 		ScreenFlip(); 
 	}
-	
+
+	DeleteGraph(playmovie.handle);
 	DeleteGraph(player.handle);
 	DeleteGraph(goal.handle);
 
@@ -228,39 +264,54 @@ VOID Play(VOID)
 
 VOID PlayProc(VOID)
 {
-	if (KeyClick(KEY_INPUT_RETURN) == TRUE)
+	/*if (KeyClick(KEY_INPUT_RETURN) == TRUE)
+	{
+		ChangeScene(GAME_SCENE_END);
+	}*/
+
+	if (OnCollRect(player.coll,goal.coll) == TRUE)
 	{
 		ChangeScene(GAME_SCENE_END);
 	}
 
 	if (KeyDown(KEY_INPUT_DOWN) == TRUE)
 	{
-		player.y += player.speed  * fps.DeltaTime;
+		player.y += player.speed  ;
 	}
 
 	if (KeyDown(KEY_INPUT_UP) == TRUE)
 	{
-		player.y -= player.speed * fps.DeltaTime;
+		player.y -= player.speed ;
 	}
 
 	if (KeyDown(KEY_INPUT_RIGHT) == TRUE)
 	{
-		player.x += player.speed * fps.DeltaTime;
+		player.x += player.speed ;
 	}
 
 	if (KeyDown(KEY_INPUT_LEFT) == TRUE)
 	{
-		player.x -= player.speed * fps.DeltaTime;
+		player.x -= player.speed ;
 	}
 
 
 	CollUpdatePlayer(&player);
+
+	CollUpdate(&goal);
 
 	return;
 }
 
 VOID PlayDraw(VOID)
 {
+	if (GetMovieStateToGraph(playmovie.handle) == 0)
+	{
+		SeekMovieToGraph(playmovie.handle, 0);
+		PlayMovieToGraph(playmovie.handle);
+	}
+
+	DrawExtendGraph(0, 0, GAME_WIDTH, GAME_HEIGHT, playmovie.handle, TRUE);
+
 	if (player.IsDraw == TRUE)
 	{
 		DrawGraph(player.x, player.y, player.handle, TRUE);
@@ -403,4 +454,16 @@ VOID CollUpdate(CHARACTOR* chara)
 
 	return;
 
+}
+
+BOOL OnCollRect(RECT a, RECT b)
+{
+	if (a.left <  b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
 }
