@@ -557,7 +557,7 @@ VOID PlayProc(VOID)
 	}
 
 	//ÉvÉåÉCÉÑÅ[ÇÃëÄçÏ
-	if (KeyDown(KEY_INPUT_UP) == TRUE)
+	if (KeyDown(KEY_INPUT_W) == TRUE)
 	{
 		player.img.y -= player.speed * fps.DeltaTime;
 
@@ -567,7 +567,7 @@ VOID PlayProc(VOID)
 			PlaySoundMem(PlayerSE.handle, PlayerSE.playType);
 		}
 	}
-	if (KeyDown(KEY_INPUT_DOWN) == TRUE)
+	if (KeyDown(KEY_INPUT_S) == TRUE)
 	{
 		player.img.y += player.speed * fps.DeltaTime;
 
@@ -578,7 +578,7 @@ VOID PlayProc(VOID)
 		}
 	}
 
-	if (KeyDown(KEY_INPUT_LEFT) == TRUE)
+	if (KeyDown(KEY_INPUT_A) == TRUE)
 	{
 		player.img.x -= player.speed * fps.DeltaTime;
 
@@ -588,7 +588,7 @@ VOID PlayProc(VOID)
 			PlaySoundMem(PlayerSE.handle, PlayerSE.playType);
 		}
 	}
-	if (KeyDown(KEY_INPUT_RIGHT) == TRUE)
+	if (KeyDown(KEY_INPUT_D) == TRUE)
 	{
 		player.img.x += player.speed * fps.DeltaTime;
 
