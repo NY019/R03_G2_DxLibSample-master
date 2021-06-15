@@ -51,10 +51,10 @@ VOID FPSWait(VOID)
 
 	waitTime /= 1000.0f;
 
-	/*if (waitTime > 0)
+	if (waitTime > 0)
 	{
 		WaitTimer(waitTime);
-	}*/
+	}
 	if (GetWaitVSyncFlag() == FALSE)
 	{
 		if (fps.Value < GAME_FPS_MAX)
